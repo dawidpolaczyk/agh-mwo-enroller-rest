@@ -46,5 +46,14 @@ public class ParticipantRestController {
 	     participantService.add(participant);
 	     return new ResponseEntity<Participant>(participant, HttpStatus.CREATED);
 	}
-	 
+  
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteParticipant(@PathVariable("id") String login) {
+	     Participant participant = participantService.findByLogin(login);
+	     if (participant == null) {
+	    	 return new ResponseEntity("Unable to delete. A participant doesn't exist.", HttpStatus.NOT_FOUND);
+	     }
+	     participantService.delete(participant);
+	     return new ResponseEntity<Participant>(participant, HttpStatus.NO_CONTENT);
+	 }
 }
