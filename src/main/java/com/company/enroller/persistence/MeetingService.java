@@ -1,4 +1,5 @@
 package com.company.enroller.persistence;
+
 import java.util.Collection;
 import org.hibernate.Query;
 import org.hibernate.Transaction;
@@ -20,11 +21,11 @@ public class MeetingService {
 		Query query = connector.getSession().createQuery(hql);
 		return query.list();
 	}
-	
+
 	public Meeting findById(Long id) {
 		return (Meeting) connector.getSession().get(Meeting.class, id);
 	}
-	
+
 	public Meeting addMeeting(Meeting meeting) {
 		Transaction transaction = connector.getSession().beginTransaction();
 		connector.getSession().save(meeting);
@@ -36,13 +37,34 @@ public class MeetingService {
 		Meeting meeting = findById(id);
 		return meeting.getParticipants();
 	}
-	
+
 	public Meeting addParticipant(long id, Participant participant) {
 		Transaction transaction = connector.getSession().beginTransaction();
 		Meeting meeting = findById(id);
 		meeting.addParticipant(participant);
 		connector.getSession().merge(meeting);
 		return meeting;
+	}
+
+	public Meeting deleteParticipant(long id, Participant participant) {
+		Transaction transaction = connector.getSession().beginTransaction();
+		Meeting meeting = findById(id);
+		meeting.removeParticipant(participant);
+		connector.getSession().save(meeting);
+		transaction.commit();
+		return meeting;
+	}
+
+	public void deleteMeeting(Meeting meeting) {
+		Transaction transaction = connector.getSession().beginTransaction();
+		connector.getSession().delete(meeting);
+		transaction.commit();
+	}
+
+	public void updateMeeting(Meeting meeting) {
+		Transaction transaction = connector.getSession().beginTransaction();
+		connector.getSession().merge(meeting);
+		transaction.commit();
 	}
 
 }
